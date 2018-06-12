@@ -64,6 +64,7 @@ var scrapers = map[collector.Scraper]bool{
 }
 
 func parseMycnf(config interface{}) (string, error) {
+	log.Infoln("parseMycnf called")
 	var dsn string
 	cfg, err := ini.Load(config)
 	if err != nil {
@@ -78,11 +79,12 @@ func parseMycnf(config interface{}) (string, error) {
 	port := cfg.Section("client").Key("port").MustUint(3306)
 	socket := cfg.Section("client").Key("socket").String()
 	if socket != "" {
-		dsn = fmt.Sprintf("%s:%s@unix(%s)/", user, password, socket)
+		dsn = fmt.Sprintf("%s:%s@unix(%s)/?allowNativePasswords=true", user, password, socket)
 	} else {
 		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/?allowNativePasswords=true", user, password, host, port)
 	}
 	log.Debugln(dsn)
+	log.Infoln("Debug DSN (remove)", dsn)
 	return dsn, nil
 }
 
@@ -158,7 +160,7 @@ func main() {
 </html>
 `)
 
-	log.Infoln("Starting mysqld_exporter", version.Info())
+	log.Infoln("Hello pl2 !", version.Info())
 	log.Infoln("Build context", version.BuildContext())
 
 	dsn = os.Getenv("DATA_SOURCE_NAME")

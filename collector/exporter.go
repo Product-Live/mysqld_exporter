@@ -149,6 +149,7 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) {
 
 	scrapeTime := time.Now()
 	db, err := sql.Open("mysql", e.dsn)
+	log.Infoln("e.dsn", e.dsn)
 	if err != nil {
 		log.Errorln("Error opening connection to database:", err)
 		e.error.Set(1)
