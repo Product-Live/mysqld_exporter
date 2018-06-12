@@ -37,45 +37,8 @@ PREFIX                  ?= $(shell pwd)
 BIN_DIR                 ?= $(shell pwd)
 DOCKER_IMAGE_TAG        ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 
-all: style staticcheck unused build test
+all: build
 
-style:
-	@echo ">> checking code style"
-	! $(GOFMT) -d $$(find . -path ./vendor -prune -o -name '*.go' -print) | grep '^'
-
-check_license:
-	@echo ">> checking license header"
-	@licRes=$$(for file in $$(find . -type f -iname '*.go' ! -path './vendor/*') ; do \
-               awk 'NR<=3' $$file | grep -Eq "(Copyright|generated|GENERATED)" || echo $$file; \
-       done); \
-       if [ -n "$${licRes}" ]; then \
-               echo "license header checking failed:"; echo "$${licRes}"; \
-               exit 1; \
-       fi
-
-test-short:
-	@echo ">> running short tests"
-	$(GO) test -short $(pkgs)
-
-test:
-	@echo ">> running all tests"
-	$(GO) test -race $(pkgs)
-
-format:
-	@echo ">> formatting code"
-	$(GO) fmt $(pkgs)
-
-vet:
-	@echo ">> vetting code"
-	$(GO) vet $(pkgs)
-
-staticcheck: $(STATICCHECK)
-	@echo ">> running staticcheck"
-	$(STATICCHECK) -ignore "$(STATICCHECK_IGNORE)" $(pkgs)
-
-unused: $(GOVENDOR)
-	@echo ">> running check for unused packages"
-	@$(GOVENDOR) list +unused | grep . && exit 1 || echo 'No unused packages'
 
 build: promu
 	@echo ">> building binaries"
