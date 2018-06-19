@@ -15,7 +15,7 @@ env:
 services:
 - docker
 
-go_import_path: github.com/prometheus/mysqld_exporter
+go_import_path: github.com/Product-Live/mysqld_exporter
 
 before_script:
 - sudo service mysql stop
